@@ -1,0 +1,25 @@
+# Argo CD Application: tells Argo CD which Git repo/path to watch and where to deploy it.
+# Apply this from your own machine (kubectl apply); it is NOT stored in the Git repo's app/ folder.
+apiVersion: argoproj.io/v1alpha1
+kind: Application
+metadata:
+  name: session20-mini
+  namespace: argocd
+spec:
+  project: default
+
+  source:
+    repoURL: https://github.com/Aryan-Bhendarkar/session20-gitops-demo.git
+    targetRevision: main
+    path: app
+
+  destination:
+    server: https://kubernetes.default.svc
+    namespace: session20
+
+  syncPolicy:
+    automated:
+      prune: true      # delete cluster resources that were removed from Git
+      selfHeal: true   # undo manual changes made directly in the cluster
+    syncOptions:
+      - CreateNamespace=true
